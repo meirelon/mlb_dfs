@@ -1,4 +1,6 @@
 import argparse
+
+import pandas as pd
 from scrape_utils import get_player_info, batting_game_logs, pitching_game_logs
 
 def run(season):
