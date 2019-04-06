@@ -1,5 +1,5 @@
 import argparse
-import scrape_utils
+from scrape_utils import player_info, batting_game_logs, pitching_game_logs
 
 def run(season):
     player_info = get_player_info()
