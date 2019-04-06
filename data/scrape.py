@@ -1,5 +1,5 @@
 import argparse
-from scrape_utils import player_info, batting_game_logs, pitching_game_logs
+from scrape_utils import get_player_info, batting_game_logs, pitching_game_logs
 
 def run(season):
     player_info = get_player_info()
@@ -29,11 +29,11 @@ def main(argv=None):
     b,p = run(args.season)
 
     b.to_gbq(project_id=args.project_id,
-                                 destination_table="baseball.batting_{}".format(season),
+                                 destination_table="baseball.batting_{}".format(args.season),
                                  if_exists="replace",
                                  chunksize=1000)
     p.to_gbq(project_id=args.project_id,
-                                 destination_table="baseball.pitching_{}".format(season),
+                                 destination_table="baseball.pitching_{}".format(args.season),
                                  if_exists="replace",
                                  chunksize=1000)
 if __name__ == '__main__':
