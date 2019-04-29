@@ -1,0 +1,4 @@
+pydfs-lineup-optimizer
+pandas-gbq == 0.10.0
+pandas==0.24.2
+requests
