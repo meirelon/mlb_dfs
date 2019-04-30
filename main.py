@@ -5,6 +5,9 @@ from deps.draftkings import get_draftkings_players
 from datetime import datetime, timedelta
 
 def file_to_gcs(request):
+    """
+    Accepts a json payload for HTTP POST
+    """
     bucket = os.environ["BUCKET"]
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
@@ -18,6 +21,9 @@ def file_to_gcs(request):
 
 
 def dk_to_gcp(request):
+    """
+    No json payload- simply makes HTTP GET and returns csv
+    """
     bucket = os.environ["BUCKET"]
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
