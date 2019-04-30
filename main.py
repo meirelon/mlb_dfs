@@ -5,7 +5,7 @@ from datetime import datetime
 
 def file_to_gcs(request):
     bucket = os.environ["BUCKET"]
-    today = datetime.now().strftime("%Y-%m-%d")
+    today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
     request_json = request.get_json(silent=True)
     if request_json and "dk" in request_json:
