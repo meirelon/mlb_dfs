@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import pandas_gbq
 from deps.gcs import upload_blob
 from deps.draftkings import get_draftkings_players
 from datetime import datetime, timedelta
