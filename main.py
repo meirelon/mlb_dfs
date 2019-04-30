@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from deps.gcs import upload_blob
+from datetime import datetime
 
 def file_to_gcs(request):
     bucket = os.environ["BUCKET"]
@@ -10,4 +11,6 @@ def file_to_gcs(request):
     if request_json and "dk" in request_json:
         df = pd.read_csv(request_json.get("dk"))
         df.to_csv("/tmp/dk.csv")
-        upload_blob(bucket_name=bucket, source_file_name="/tmp/dk.csv", destination_blob_name="mlb.csv")
+        upload_blob(bucket_name=bucket,
+                    source_file_name="/tmp/dk.csv",
+                    destination_blob_name="mlb_{}.csv".format(today.replace("-","")))
