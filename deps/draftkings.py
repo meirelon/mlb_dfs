@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 
 def get_draftkings_players():
+    col_heads = ["position", "name_and_id", "name", "id", "roster_position", "salary", "game_info", "teamabbrev", "avgpointspergame"]
     r = requests.get("https://www.draftkings.com/lobby/getcontests?sport=MLB")
     contests = r.json().get("Contests")
     dg = [x.get("dg") for x in contests if x.get("gameType") == "Classic"]
@@ -14,4 +15,5 @@ def get_draftkings_players():
             continue
         else:
             break
+    players.columns = col
     return players
