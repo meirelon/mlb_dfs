@@ -24,11 +24,17 @@ def dk_to_gcp(request):
     """
     No json payload- simply makes HTTP GET and returns csv
     """
+    project = os.environ["PROJECT_ID"]
+    dataset = os.environ["DATASET"]
     bucket = os.environ["BUCKET"]
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
     df = get_draftkings_players()
-    df.to_csv("/tmp/dk.csv", index=False)
-    upload_blob(bucket_name=bucket,
-                source_file_name="/tmp/dk.csv",
-                destination_blob_name="data/mlb_{}.csv".format(today.replace("-","")))
+    # df.to_csv("/tmp/dk.csv", index=False)
+    # upload_blob(bucket_name=bucket,
+    #             source_file_name="/tmp/dk.csv",
+    #             destination_blob_name="data/mlb_{}.csv".format(today.replace("-","")))
+
+    pandas_gbq.to_gbq(df, project_id=project,
+              destination_table="{dataset}.mlb_draftkings_{dt}".format(dataset=dataset, dt=today.replace("-","")),
+              if_exists="replace")
