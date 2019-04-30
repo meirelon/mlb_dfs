@@ -1,4 +1,5 @@
 import requests
+import pandas as pd
 
 def get_draftkings_players():
     r = requests.get("https://www.draftkings.com/lobby/getcontests?sport=MLB")
