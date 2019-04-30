@@ -32,4 +32,4 @@ def dk_to_gcp(request):
     df.to_csv("/tmp/dk.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/dk.csv",
-                destination_blob_name="/data/mlb_{}.csv".format(today.replace("-","")))
+                destination_blob_name="data/mlb_{}.csv".format(today.replace("-","")))
