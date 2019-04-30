@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from deps.gcs import upload_blob
+from deps.draftkings import get_draftkings_players
 from datetime import datetime, timedelta
 
 def file_to_gcs(request):
@@ -14,3 +15,15 @@ def file_to_gcs(request):
         upload_blob(bucket_name=bucket,
                     source_file_name="/tmp/dk.csv",
                     destination_blob_name="mlb_{}.csv".format(today.replace("-","")))
+
+
+def dk_to_gcp(request):
+    bucket = os.environ["BUCKET"]
+    today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
+
+    url = get_draftkings_players()
+    df = pd.read_csv(request_json.get("dk"))
+    df.to_csv("/tmp/dk.csv", index=False)
+    upload_blob(bucket_name=bucket,
+                source_file_name="/tmp/dk.csv",
+                destination_blob_name="/data/mlb_{}.csv".format(today.replace("-","")))
