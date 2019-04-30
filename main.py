@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from deps.gcs import upload_blob
-from datetime import datetime
+from datetime import datetime, timedelta
 
 def file_to_gcs(request):
     bucket = os.environ["BUCKET"]
