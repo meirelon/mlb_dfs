@@ -22,7 +22,7 @@ def dk_to_gcp(request):
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
     url = get_draftkings_players()
-    df = pd.read_csv(request_json.get("dk"))
+    df = pd.read_csv(url)
     df.to_csv("/tmp/dk.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/dk.csv",
