@@ -15,5 +15,5 @@ def get_draftkings_players():
             continue
         else:
             break
-    players.columns = col
+    players.columns = col_heads
     return players
