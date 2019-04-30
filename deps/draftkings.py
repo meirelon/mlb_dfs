@@ -9,6 +9,7 @@ def get_draftkings_players():
     i=0
     while True:
         players = pd.read_csv(url.format(dg[i]))
+        i+=1
         if players.shape[0] < 1:
             continue
         else:
