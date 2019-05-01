@@ -126,7 +126,11 @@ def mlb_dfs_telegram(request):
                                                           silent=True,
                                                           cache=True),
                                                           bot)
-        chat_text = update.message.text
+        try:
+            chat_text = update.message.text
+        except:
+            chat_text = "/draftkings 2"
+
         chat_id = update.message.chat.id
 
         if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
