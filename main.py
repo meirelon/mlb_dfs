@@ -112,3 +112,32 @@ def dk_lineups(request):
     lineup_link = "https://storage.cloud.google.com/{bucket}/lineups/dk_lineups_{dt}.csv"
 
     return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
+
+
+def mlb_dfs_telegram(request):
+    token = os.environ["TELEGRAM_TOKEN"]
+    project = os.environ["PROJECT_ID"]
+    bot = telegram.Bot(token=token)
+    if request.method == "POST":
+        update = telegram.Update.de_json(request.get_json(force=True,
+                                                          silent=True,
+                                                          cache=True),
+                                                          bot)
+        chat_text = update.message.text
+        chat_id = update.message.chat.id
+
+        if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
+            parse_text = chat_text.lower().split(" ")
+            if len(parse_text) > 2:
+                if isinstance(int(parse_text[1]), int):
+                    n = int(parse_text[1])
+                else:
+                    n = 2
+            n = 2
+            request_link = "https://us-central1-{project}.cloudfunctions.net/dk_lineups".format(project=project)
+            r = requests.post(request_link, json={"n_lineups": n})
+            return_string = """Hey {person}, <a href="{link}">Click here for link to lineups</a>""".format(update.message.from_user.first_name,
+                                                                                                           link=r.text)
+            bot.send_message(chat_id=chat_id,
+                             text=return_string,
+                             parse_mode=telegram.ParseMode.HTML)

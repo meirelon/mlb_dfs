@@ -4,4 +4,5 @@ pandas==0.24.2
 google-api-python-client
 google-cloud-storage
 scikit-learn == 0.20.3
+python-telegram-bot==11.1.0
 requests
