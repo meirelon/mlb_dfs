@@ -66,7 +66,7 @@ def dk_predictions(request):
     df = input_run.run()
     df["prediction"] = model.predict(df.drop(["name", "tm"], axis=1))
     prediction_df = df[["name", "tm", "prediction"]]
-    pandas_gbq.to_gbq(df, project_id=project,
+    pandas_gbq.to_gbq(prediction_df, project_id=project,
               destination_table="{dataset}.mlb_draftkings_predictions_{dt}".format(dataset=dataset_dfs, dt=today.replace("-","")),
               if_exists="replace")
 
