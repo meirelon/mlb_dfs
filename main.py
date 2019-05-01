@@ -127,12 +127,15 @@ def mlb_dfs_telegram(request):
                                                           silent=True,
                                                           cache=True),
                                                           bot)
+        chat_id = update.message.chat.id
         try:
             chat_text = update.message.text
         except:
+            bot.send_message(chat_id=chat_id,
+                             text="test",
             chat_text = "/draftkings 2"
 
-        chat_id = update.message.chat.id
+
 
         if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
             parse_text = chat_text.lower().split(" ")
@@ -144,7 +147,7 @@ def mlb_dfs_telegram(request):
             n = 2
             request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
             r = requests.post(request_link, json={"n_lineups": n})
-            return_string = """Hey {person}, <a href="{link}">Click here for link to lineups</a>""".format(person=update.message.from_user.first_name,
+            return_string = """Hey {person}, <a href="{link}">Click here to view lineups</a>""".format(person=update.message.from_user.first_name,
                                                                                                            link=r.text)
             bot.send_message(chat_id=chat_id,
                              text=return_string,
