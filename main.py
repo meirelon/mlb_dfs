@@ -132,7 +132,7 @@ def mlb_dfs_telegram(request):
             chat_text = update.message.text
         except:
             bot.send_message(chat_id=chat_id,
-                             text="test",)
+                             text="no message")
             chat_text = "/draftkings 2"
 
 
