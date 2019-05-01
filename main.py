@@ -108,3 +108,7 @@ def dk_lineups(request):
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
                 destination_blob_name="lineups/dk_lineups_{}.csv".format(today.replace("-","")))
+
+    lineup_link = "https://console.cloud.google.com/storage/browser/{bucket}/lineups/dk_lineups_{dt}.csv"
+
+    return {"lineups":lineup_link.format(bucket=bucket, dt=today.replace("-",""))}
