@@ -144,7 +144,7 @@ def mlb_dfs_telegram(request):
             n = 2
             request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
             r = requests.post(request_link, json={"n_lineups": n})
-            return_string = """Hey {person}, <a href="{link}">Click here for link to lineups</a>""".format(update.message.from_user.first_name,
+            return_string = """Hey {person}, <a href="{link}">Click here for link to lineups</a>""".format(person=update.message.from_user.first_name,
                                                                                                            link=r.text)
             bot.send_message(chat_id=chat_id,
                              text=return_string,
