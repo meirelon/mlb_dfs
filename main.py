@@ -109,6 +109,6 @@ def dk_lineups(request):
                 source_file_name="/tmp/lineups.csv",
                 destination_blob_name="lineups/dk_lineups_{}.csv".format(today.replace("-","")))
 
-    lineup_link = "https://console.cloud.google.com/storage/browser/{bucket}/lineups/dk_lineups_{dt}.csv"
+    lineup_link = "https://storage.cloud.google.com/{bucket}/lineups/dk_lineups_{dt}.csv"
 
     return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
