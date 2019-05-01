@@ -130,6 +130,8 @@ def mlb_dfs_telegram(request):
         chat_id = update.message.chat.id
         try:
             chat_text = update.message.text
+            bot.send_message(chat_id=chat_id,
+                             text=chat_text)
         except:
             bot.send_message(chat_id=chat_id,
                              text="no message")
@@ -144,6 +146,8 @@ def mlb_dfs_telegram(request):
                     n = int(parse_text[1])
                 else:
                     n = 2
+
+            bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
             n = 2
             request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
             r = requests.post(request_link, json={"n_lineups": n})
