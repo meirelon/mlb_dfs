@@ -1,4 +1,5 @@
 import pickle
+from tempfile import NamedTemporaryFile
 from google.cloud import storage
 
 def upload_blob(bucket_name, source_file_name, destination_blob_name):
