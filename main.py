@@ -116,6 +116,7 @@ def dk_lineups(request):
 
 def mlb_dfs_telegram(request):
     import telegram
+    import requests
     token = os.environ["TELEGRAM_TOKEN"]
     project = os.environ["PROJECT_ID"]
     foo = os.environ["FOO"]
