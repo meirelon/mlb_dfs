@@ -74,20 +74,20 @@ def dk_lineups(request):
     project = os.environ["PROJECT_ID"]
     bucket = os.environ["BUCKET"]
     dataset_base = os.environ["DATASET_BASE"]
-    dfs_dataset = os.environ["DATASET_DFS"]
+    dataset_dfs = os.environ["DATASET_DFS"]
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
     request_json = request.get_json(silent=True)
 
     if request_json and "n_lineups" in request_json:
         n_lineups = request_json.get("n_lineups")
-        if n_lineups > 15:
-            n_lineups = 15
+        if n_lineups > 10:
+            n_lineups = 10
     else:
         n_lineups = 2
 
-    df = get_draftkings_predictions(project="scarlet-labs",
-                                    dataset_base="baseball",
-                                    dataset_dfs="dfs",
+    df = get_draftkings_predictions(project=project,
+                                    dataset_base=dataset_base,
+                                    dataset_dfs=dataset_dfs,
                                     dt=today.replace("-",""))
     df.to_csv("/tmp/mlb_dk.csv", index=False)
     optimizer = get_optimizer(Site.DRAFTKINGS, Sport.BASEBALL)
