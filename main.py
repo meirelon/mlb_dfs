@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 import pandas_gbq
-from pydfs_lineup_optimizer import get_optimizer, Site, Sport
 
 from deps.gcs import upload_blob, load_pipeline
 from deps.draftkings import get_draftkings_players, get_draftkings_predictions
@@ -71,6 +70,7 @@ def dk_predictions(request):
               if_exists="replace")
 
 def dk_lineups(request):
+    from pydfs_lineup_optimizer import get_optimizer, Site, Sport
     project = os.environ["PROJECT_ID"]
     bucket = os.environ["BUCKET"]
     dataset_base = os.environ["DATASET_BASE"]
@@ -115,6 +115,7 @@ def dk_lineups(request):
 
 
 def mlb_dfs_telegram(request):
+    import telegram
     token = os.environ["TELEGRAM_TOKEN"]
     project = os.environ["PROJECT_ID"]
     foo = os.environ["FOO"]
