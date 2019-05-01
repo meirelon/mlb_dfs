@@ -125,10 +125,10 @@ def mlb_dfs_telegram(request):
     if request.method == "POST":
         update = telegram.Update.de_json(request.get_json(force=True,
                                                           silent=True,
-                                                          cache=True),
-                                                          bot)
+                                                          cache=True), bot)
         chat_id = update.message.chat.id
         try:
+            n = None
             chat_text = update.message.text
             if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
                 parse_text = chat_text.lower().split(" ")
@@ -139,7 +139,8 @@ def mlb_dfs_telegram(request):
                         n = 2
 
                 bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
-                n = 2
+                if n is None:
+                    n = 2
                 request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
                 r = requests.post(request_link, json={"n_lineups": n})
                 return_string = """Hey {person}, <a href="{link}">Click here to view lineups</a>""".format(person=update.message.from_user.first_name,
