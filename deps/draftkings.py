@@ -17,3 +17,66 @@ def get_draftkings_players():
             break
     players.columns = col_heads
     return players
+
+def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
+
+    q = """with
+    dk as(
+    select *
+    from `{project}.{dataset_dfs}.mlb_draftkings_*`
+    where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_dfs}.mlb_draftkings_*`)
+    ),
+
+    injuries as(
+    select distinct concat(name_first, " ", name_last) as name
+    from `{project}.{dataset_base}.injuries_*`
+    where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_base}.injuries_*`)
+    ),
+
+    probable_starters as(
+    select position, name_and_id, name,	id,	roster_position, salary, game_info, teamabbrev,	avgpointspergame
+    from dk
+    join(
+    select concat(first_name, " ", last_name) as name, tm as teamabbrev
+    from `{project}.{dataset_base}.probable_pitchers_*`
+    where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_base}.probable_pitchers_*`)
+    group by 1,2
+    )
+    using (name, teamabbrev)
+    ),
+
+    predictions as(
+    select name, teamabbrev, prediction
+    from `{project}.{dataset_dfs}.dk_predictions_{dt}` a
+    join `{project}.{dataset_base}.mlbam_team_mapping` b
+    on a.tm = b.mlbam_team
+    ),
+
+    raw as(
+    select *
+    from dk
+    where name not in (select * from injuries) and position != "SP"
+    union all(
+    select *
+    from probable_starters
+    )
+    )
+
+    select position, name_and_id, name,	id,	roster_position, salary, game_info, teamabbrev,	prediction
+    from(
+    select * except(avgpointspergame, prediction),
+    case when prediction is null then avgpointspergame else prediction end as prediction
+    from raw
+    left join predictions
+    using(name, teamabbrev)
+    )
+    """
+
+    query_formatted = q.format(project=project,
+                               dataset_base=dataset_base,
+                               dataset_dfs=dataset_dfs,
+                               dt=dt)
+
+    df = pd.read_gbq(project_id=project, query=query_formatted, dialect="standard")
+    df.columns = ["Position","Name + ID","Name","ID","Roster Position","Salary","Game Info","TeamAbbrev","AvgPointsPerGame",]
+    return df
