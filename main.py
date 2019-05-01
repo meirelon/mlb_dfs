@@ -63,7 +63,7 @@ def dk_predictions(request):
                           dataset=dataset_base,
                           yesterday=yesterday,
                           today=today)
-    df = input_data.run()
+    df = input_run.run()
     df["prediction"] = model.predict(df.drop(["name", "tm"], axis=1))
     prediction_df = df[["name", "tm", "prediction"]]
     pandas_gbq.to_gbq(df, project_id=project,
