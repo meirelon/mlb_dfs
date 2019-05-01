@@ -47,7 +47,7 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
 
     predictions as(
     select name, teamabbrev, prediction
-    from `{project}.{dataset_dfs}.mlb_draftkings_predictions_{dt}` a
+    from `{project}.{dataset_dfs}.mlb_dk_predictions_{dt}` a
     join `{project}.{dataset_base}.mlbam_team_mapping` b
     on a.tm = b.mlbam_team
     ),
