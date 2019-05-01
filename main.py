@@ -117,7 +117,9 @@ def dk_lineups(request):
 def mlb_dfs_telegram(request):
     token = os.environ["TELEGRAM_TOKEN"]
     project = os.environ["PROJECT_ID"]
+    foo = os.environ["FOO"]
     bot = telegram.Bot(token=token)
+
     if request.method == "POST":
         update = telegram.Update.de_json(request.get_json(force=True,
                                                           silent=True,
@@ -134,7 +136,7 @@ def mlb_dfs_telegram(request):
                 else:
                     n = 2
             n = 2
-            request_link = "https://us-central1-{project}.cloudfunctions.net/dk_lineups".format(project=project)
+            request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
             r = requests.post(request_link, json={"n_lineups": n})
             return_string = """Hey {person}, <a href="{link}">Click here for link to lineups</a>""".format(update.message.from_user.first_name,
                                                                                                            link=r.text)
