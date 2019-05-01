@@ -130,29 +130,22 @@ def mlb_dfs_telegram(request):
         chat_id = update.message.chat.id
         try:
             chat_text = update.message.text
-            bot.send_message(chat_id=chat_id,
-                             text=chat_text)
+            if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
+                parse_text = chat_text.lower().split(" ")
+                if len(parse_text) > 1:
+                    if isinstance(int(parse_text[1]), int):
+                        n = int(parse_text[1])
+                    else:
+                        n = 2
+
+                bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
+                n = 2
+                request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
+                r = requests.post(request_link, json={"n_lineups": n})
+                return_string = """Hey {person}, <a href="{link}">Click here to view lineups</a>""".format(person=update.message.from_user.first_name,
+                                                                                                               link=r.text)
+                bot.send_message(chat_id=chat_id,
+                                 text=return_string,
+                                 parse_mode=telegram.ParseMode.HTML)
         except:
-            bot.send_message(chat_id=chat_id,
-                             text="no message")
-            chat_text = "/draftkings 2"
-
-
-
-        if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
-            parse_text = chat_text.lower().split(" ")
-            if len(parse_text) > 1:
-                if isinstance(int(parse_text[1]), int):
-                    n = int(parse_text[1])
-                else:
-                    n = 2
-
-            bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
-            n = 2
-            request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
-            r = requests.post(request_link, json={"n_lineups": n})
-            return_string = """Hey {person}, <a href="{link}">Click here to view lineups</a>""".format(person=update.message.from_user.first_name,
-                                                                                                           link=r.text)
-            bot.send_message(chat_id=chat_id,
-                             text=return_string,
-                             parse_mode=telegram.ParseMode.HTML)
+            "ok"
