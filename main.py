@@ -134,8 +134,8 @@ def mlb_dfs_telegram(request):
                 parse_text = chat_text.lower().split(" ")
                 if len(parse_text) > 1:
                     n = parse_text[1]
-                    else:
-                        n = 2
+                else:
+                    n = 2
 
                 bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
                 if n is None:
