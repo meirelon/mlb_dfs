@@ -111,4 +111,4 @@ def dk_lineups(request):
 
     lineup_link = "https://console.cloud.google.com/storage/browser/{bucket}/lineups/dk_lineups_{dt}.csv"
 
-    return {"lineups":lineup_link.format(bucket=bucket, dt=today.replace("-",""))}
+    return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
