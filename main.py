@@ -133,8 +133,7 @@ def mlb_dfs_telegram(request):
             if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
                 parse_text = chat_text.lower().split(" ")
                 if len(parse_text) > 1:
-                    if isinstance(int(parse_text[1]), int):
-                        n = int(parse_text[1])
+                    n = parse_text[1]
                     else:
                         n = 2
 
