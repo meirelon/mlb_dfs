@@ -120,7 +120,7 @@ def dk_lineups(request):
     return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
 
 
-def dk_lineup_export(request):
+def dk_lineups_export(request):
     project = os.environ["PROJECT_ID"]
     dataset = os.environ["DATASET"]
     bucket = os.environ["BUCKET"]
