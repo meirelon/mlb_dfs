@@ -1,5 +1,6 @@
 import requests
 from functools import reduce
+import gcsfs
 
 import pandas as pd
 
@@ -100,32 +101,32 @@ class dkLineupExport:
         return df
 
     def get_dk_lineups(self):
-        import gcsfs
         lineups = pd.read_csv("gs://{bucket}/lineups/daily_dk_lineups.csv".format(bucket=self.bucket))
         return lineups
 
     def get_lineups_with_id(self):
+        print("first")
         df = self.get_dk_players()
+        print("second")
         lineups = self.get_dk_lineups()
 
         lineups["name"] = lineups["first"] + " " + lineups["last"]
         lineups_with_id = lineups.set_index("name").join(df[["name", "name_and_id"]].set_index("name")).reset_index()
         return lineups_with_id
 
+    def lineup_format(self, df):
+        position_cols = ["P", "P",	"C", "1B", "2B", "3B", "SS", "OF", "OF", "OF"]
+        position_order = ["P", "C", "1B", "2B", "3B", "SS", "OF"]
+        position_values = [list(df[df["pos"].isin([x])]["name_and_id"].values) for x in position_order]
+        position_values_flatmap = reduce(list.__add__, position_values)
+        dfs_df = pd.DataFrame(position_values_flatmap).transpose()
+        dfs_df.columns = position_cols
+        return dfs_df
+
 
     def run(self, total_lineups=None):
         lineups_with_id = self.get_lineups_with_id()
-        if total_lineups is None:
-            total_lineups = 10
-        position_cols = ["P", "P",	"C", "1B", "2B", "3B", "SS", "OF", "OF", "OF"]
-        position_order = ["P", "C", "1B", "2B", "3B", "SS", "OF"]
 
-        export_df = pd.DataFrame()
-        for n in range(1, total_lineups):
-            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == str(n) & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
-                               for x in position_order]
-            position_values_flatmap = reduce(list.__add__, position_values)
-            dfs_df = pd.DataFrame(position_values_flatmap).transpose()
-            export_df = pd.concat([export_df, dfs_df], axis=0, ignore_index=True)
-        export_df.columns = position_cols
-        return export_df
+        df_split = [x for _, x in lineups_with_id.groupby("lineup_number")]
+        df_list = [self.lineup_format(d) for d in df_split]
+        return pd.concat(df_list, axis=0, ignore_index=True)
