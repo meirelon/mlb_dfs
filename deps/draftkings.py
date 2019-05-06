@@ -80,3 +80,50 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
     df = pd.read_gbq(project_id=project, query=query_formatted, dialect="standard")
     df.columns = ["Position","Name + ID","Name","ID","Roster Position","Salary","Game Info","TeamAbbrev","AvgPointsPerGame",]
     return df
+
+
+class dkLineupExport:
+    def __init__(self, project, dataset, bucket, dt):
+        self.project = project
+        self.dataset = dataset
+        self.bucket = bucket
+        self.dt = dt
+
+    def get_dk_players(self):
+        q = "select * from `{project}.{dataset}.mlb_draftkings_{dt}`"
+        query_formatted = q.format(project=self.project, dataset=self.dataset, dt=self.dt)
+        df = pd.read_gbq(project_id=self.project,
+                         query=query_formatted,
+                         dialect="standard")
+        return df
+
+    def get_dk_lineups(self):
+        import gcsfs
+        lineups = pd.read_csv("gs://{bucket}/lineups/daily_dk_lineups.csv".format(bucket=self.bucket))
+        return lineups
+
+    def get_lineups_with_id(self):
+        df = self.get_dk_players()
+        lineups = self.get_dk_lineups()
+
+        lineups["name"] = lineups["first"] + " " + lineups["last"]
+        lineups_with_id = lineups.set_index("name").join(df[["name", "name_and_id"]].set_index("name")).reset_index()
+        return lineups_with_id
+
+
+    def run(self, total_lineups=None):
+        lineups_with_id = self.get_lineups_with_id()
+        if total_lineups is None:
+            total_lineups = lineups_with_id["lineup_number"].max()
+        position_cols = ["P", "P",	"C", "1B", "2B", "3B", "SS", "OF", "OF", "OF"]
+        position_order = ["P", "C", "1B", "2B", "3B", "SS", "OF"]
+
+        export_df = pd.DataFrame()
+        for n in range(1, total_lineups):
+            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == n & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
+                               for x in position_order]
+            position_values_flatmap = reduce(list.__add__, position_values)
+            dfs_df = pd.DataFrame(position_values_flatmap).transpose()
+            dfs_df.columns = position_cols
+            export_df = pd.concat([export_df, dfs_df], axis=0, ignore_index=True)
+        return export_df

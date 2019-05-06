@@ -6,7 +6,7 @@ import pandas as pd
 import pandas_gbq
 
 from deps.gcs import upload_blob, load_pipeline
-from deps.draftkings import get_draftkings_players, get_draftkings_predictions
+from deps.draftkings import get_draftkings_players, get_draftkings_predictions, dkLineupExport
 from deps.input import inputData
 
 def file_to_gcs(request):
@@ -105,6 +105,7 @@ def dk_lineups(request):
         i+=1
         lineups = pd.concat([lineups, lineup_df], ignore_index=True)
 
+    lineups.columns = ["pos", "first", "last", "position", "team", "opp", "projection", "salary"]
     lineups.to_csv("/tmp/lineups.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
@@ -119,38 +120,20 @@ def dk_lineups(request):
     return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
 
 
-def mlb_dfs_telegram(request):
-    import telegram
-    import requests
-    token = os.environ["TELEGRAM_TOKEN"]
+def dk_lineup_export(request):
     project = os.environ["PROJECT_ID"]
-    foo = os.environ["FOO"]
-    bot = telegram.Bot(token=token)
+    dataset = os.environ["DATASET"]
+    bucket = os.environ["BUCKET"]
+    today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
 
-    if request.method == "POST":
-        update = telegram.Update.de_json(request.get_json(force=True,
-                                                          silent=True,
-                                                          cache=True), bot)
-        chat_id = update.message.chat.id
-        try:
-            n = None
-            chat_text = update.message.text
-            if bool(re.search(string=chat_text.lower(), pattern="[/]draftkings")):
-                parse_text = chat_text.lower().split(" ")
-                if len(parse_text) > 1:
-                    n = parse_text[1]
-                else:
-                    n = 2
+    pipeline = dkLineupExport(project=project,
+                                   dataset=dataset,
+                                   bucket=bucket,
+                                   dt=today.replace("-", ""))
 
-                bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
-                if n is None:
-                    n = 2
-                request_link = "https://us-central1-{project}.cloudfunctions.net/{foo}".format(project=project, foo=foo)
-                r = requests.post(request_link, json={"n_lineups": n})
-                return_string = """Hey {person}, <a href="{link}">Click here to view lineups</a>""".format(person=update.message.from_user.first_name,
-                                                                                                               link=r.text)
-                bot.send_message(chat_id=chat_id,
-                                 text=return_string,
-                                 parse_mode=telegram.ParseMode.HTML)
-        except:
-            return "ok"
+    lineups_export = pipeline.run()
+    lineups_export.to_csv("/tmp/lineups_export.csv", index=False)
+
+    upload_blob(bucket_name=bucket,
+                source_file_name="/tmp/lineups_export.csv",
+                destination_blob_name="lineups/daily_export_dk_lineups.csv".format(today.replace("-","")))
