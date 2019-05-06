@@ -126,6 +126,6 @@ class dkLineupExport:
                                for x in position_order]
             position_values_flatmap = reduce(list.__add__, position_values)
             dfs_df = pd.DataFrame(position_values_flatmap).transpose()
-            # dfs_df.columns = position_cols
             export_df = pd.concat([export_df, dfs_df], axis=0, ignore_index=True)
+            export_df.columns = position_cols
         return export_df
