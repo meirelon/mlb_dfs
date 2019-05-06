@@ -1,4 +1,6 @@
 import requests
+from functools import reduce
+
 import pandas as pd
 
 def get_draftkings_players():
