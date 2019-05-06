@@ -108,7 +108,7 @@ def dk_lineups(request):
     lineups.to_csv("/tmp/lineups.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
-                destination_blob_name="lineups/ab_dk_lineups.csv".format(today.replace("-","")))
+                destination_blob_name="lineups/daily_dk_lineups.csv".format(today.replace("-","")))
 
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
