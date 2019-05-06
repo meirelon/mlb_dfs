@@ -81,8 +81,8 @@ def dk_lineups(request):
 
     if request_json and "n_lineups" in request_json:
         n_lineups = int(request_json.get("n_lineups"))
-        if n_lineups > 10:
-            n_lineups = 10
+        if n_lineups > 100:
+            n_lineups = 100
     else:
         n_lineups = 2
 
@@ -106,6 +106,10 @@ def dk_lineups(request):
         lineups = pd.concat([lineups, lineup_df], ignore_index=True)
 
     lineups.to_csv("/tmp/lineups.csv", index=False)
+    upload_blob(bucket_name=bucket,
+                source_file_name="/tmp/lineups.csv",
+                destination_blob_name="lineups/ab_dk_lineups.csv".format(today.replace("-","")))
+
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
                 destination_blob_name="lineups/dk_lineups_{}.csv".format(today.replace("-","")))
