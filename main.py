@@ -105,6 +105,7 @@ def dk_lineups(request):
         i+=1
         lineups = pd.concat([lineups, lineup_df], ignore_index=True)
 
+    lineups.columns = ["pos", "first", "last", "position", "team", "opp", "projection", "salary", "lineup_number"]
     lineups.to_csv("/tmp/lineups.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
