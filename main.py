@@ -70,6 +70,7 @@ def dk_predictions(request):
               if_exists="replace")
 
 def dk_lineups(request):
+    # check if most recent lineups were already created.
     from pydfs_lineup_optimizer import get_optimizer, Site, Sport
     project = os.environ["PROJECT_ID"]
     bucket = os.environ["BUCKET"]
@@ -148,4 +149,4 @@ def mlb_dfs_telegram(request):
                                  text=return_string,
                                  parse_mode=telegram.ParseMode.HTML)
         except:
-            "ok"
+            return "ok"
