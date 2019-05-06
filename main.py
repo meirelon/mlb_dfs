@@ -69,7 +69,7 @@ def dk_predictions(request):
               destination_table="{dataset}.mlb_dk_predictions_{dt}".format(dataset=dataset_dfs, dt=today.replace("-","")),
               if_exists="replace")
 
-def dk_lineups(request):
+def dk_lineup(request):
     # check if most recent lineups were already created.
     from pydfs_lineup_optimizer import get_optimizer, Site, Sport
     project = os.environ["PROJECT_ID"]
