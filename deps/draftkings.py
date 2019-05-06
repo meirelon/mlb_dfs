@@ -122,7 +122,7 @@ class dkLineupExport:
 
         export_df = pd.DataFrame()
         for n in range(1, total_lineups):
-            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == n & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
+            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == str(n) & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
                                for x in position_order]
             position_values_flatmap = reduce(list.__add__, position_values)
             dfs_df = pd.DataFrame(position_values_flatmap).transpose()
