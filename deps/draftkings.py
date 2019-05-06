@@ -116,13 +116,13 @@ class dkLineupExport:
     def run(self, total_lineups=None):
         lineups_with_id = self.get_lineups_with_id()
         if total_lineups is None:
-            total_lineups = lineups_with_id["lineup_number"].max()
+            total_lineups = 10
         position_cols = ["P", "P",	"C", "1B", "2B", "3B", "SS", "OF", "OF", "OF"]
         position_order = ["P", "C", "1B", "2B", "3B", "SS", "OF"]
 
         export_df = pd.DataFrame()
         for n in range(1, total_lineups):
-            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == str(n) & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
+            position_values = [list(lineups_with_id[lineups_with_id["lineup_number"] == n & lineups_with_id["pos"].isin([x])]["name_and_id"].values)
                                for x in position_order]
             position_values_flatmap = reduce(list.__add__, position_values)
             dfs_df = pd.DataFrame(position_values_flatmap).transpose()
