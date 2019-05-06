@@ -84,7 +84,7 @@ def dk_lineups(request):
         if n_lineups > 10:
             n_lineups = 10
     else:
-        n_lineups = 2
+        n_lineups = 10
 
     df = get_draftkings_predictions(project=project,
                                     dataset_base=dataset_base,
