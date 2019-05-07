@@ -28,6 +28,7 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
     select *
     from `{project}.{dataset_dfs}.mlb_draftkings_*`
     where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_dfs}.mlb_draftkings_*`)
+    and avgpointspergame > 0 and salary > 3000
     ),
 
     injuries as(
