@@ -94,7 +94,7 @@ def dk_lineup(request):
     optimizer = get_optimizer(Site.DRAFTKINGS, Sport.BASEBALL)
     optimizer.load_players_from_csv("/tmp/mlb_dk.csv")
     exporter = CSVLineupExporter(optimizer.optimize(n_lineups))
-    exporter.export("/tmp/mlb_dk.csv")
+    exporter.export("/tmp/lineups.csv")
 
     # lineups = pd.DataFrame()
     # cols = ["pos", "first", "last", "position", "team", "opp", "fppg", "salary"]
