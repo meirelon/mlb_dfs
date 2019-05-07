@@ -71,7 +71,7 @@ def dk_predictions(request):
 
 def dk_lineup(request):
     # check if most recent lineups were already created.
-    from pydfs_lineup_optimizer import get_optimizer, Site, Sport
+    from pydfs_lineup_optimizer import get_optimizer, Site, Sport, CSVLineupExporter
     project = os.environ["PROJECT_ID"]
     bucket = os.environ["BUCKET"]
     dataset_base = os.environ["DATASET_BASE"]
@@ -93,20 +93,22 @@ def dk_lineup(request):
     df.to_csv("/tmp/mlb_dk.csv", index=False)
     optimizer = get_optimizer(Site.DRAFTKINGS, Sport.BASEBALL)
     optimizer.load_players_from_csv("/tmp/mlb_dk.csv")
+    exporter = CSVLineupExporter(optimizer.optimize(n_lineups))
+    exporter.export("/tmp/mlb_dk.csv")
 
-    lineups = pd.DataFrame()
-    cols = ["pos", "first", "last", "position", "team", "opp", "fppg", "salary"]
-    i=1
-    for lineup in optimizer.optimize(n=n_lineups):
-        lineup_list = lineup.printer.print_lineup(lineup).split("\n")[0:10]
-        lineup_df = pd.concat([pd.DataFrame(dict(zip(cols,re.split("\s{1,}",x.strip())[1:9])),index=[0])
-                               for x in lineup_list], axis=0, ignore_index=True)
-        lineup_df["lineup_number"] = i
-        i+=1
-        lineups = pd.concat([lineups, lineup_df], ignore_index=True)
-
-    # lineups.columns = ["pos", "first", "last", "position", "team", "opp", "projection", "salary", "lineup_number"]
-    lineups.to_csv("/tmp/lineups.csv", index=False)
+    # lineups = pd.DataFrame()
+    # cols = ["pos", "first", "last", "position", "team", "opp", "fppg", "salary"]
+    # i=1
+    # for lineup in optimizer.optimize(n=n_lineups):
+    #     lineup_list = lineup.printer.print_lineup(lineup).split("\n")[0:10]
+    #     lineup_df = pd.concat([pd.DataFrame(dict(zip(cols,re.split("\s{1,}",x.strip())[1:9])),index=[0])
+    #                            for x in lineup_list], axis=0, ignore_index=True)
+    #     lineup_df["lineup_number"] = i
+    #     i+=1
+    #     lineups = pd.concat([lineups, lineup_df], ignore_index=True)
+    #
+    # # lineups.columns = ["pos", "first", "last", "position", "team", "opp", "projection", "salary", "lineup_number"]
+    # lineups.to_csv("/tmp/lineups.csv", index=False)
     upload_blob(bucket_name=bucket,
                 source_file_name="/tmp/lineups.csv",
                 destination_blob_name="lineups/daily_dk_lineups.csv")
