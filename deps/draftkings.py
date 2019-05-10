@@ -21,14 +21,14 @@ def get_draftkings_players():
     players.columns = col_heads
     return players
 
-def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
+def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salary=3500):
 
     q = """with
     dk as(
     select *
     from `{project}.{dataset_dfs}.mlb_draftkings_*`
     where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_dfs}.mlb_draftkings_*`)
-    and avgpointspergame > 0 and salary > 3000
+    and avgpointspergame > 0 and salary > {min_salary}
     ),
 
     injuries as(
@@ -79,7 +79,8 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt):
     query_formatted = q.format(project=project,
                                dataset_base=dataset_base,
                                dataset_dfs=dataset_dfs,
-                               dt=dt)
+                               dt=dt,
+                               min_salary=min_salary)
 
     df = pd.read_gbq(project_id=project, query=query_formatted, dialect="standard")
     df.columns = ["Position","Name + ID","Name","ID","Roster Position","Salary","Game Info","TeamAbbrev","AvgPointsPerGame",]

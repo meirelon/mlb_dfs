@@ -81,8 +81,8 @@ def dk_lineup(request):
 
     if request_json and "n_lineups" in request_json:
         n_lineups = int(request_json.get("n_lineups"))
-        if n_lineups > 10:
-            n_lineups = 10
+        if n_lineups > 100:
+            n_lineups = 100
     else:
         n_lineups = 10
 
