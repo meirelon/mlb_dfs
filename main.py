@@ -6,7 +6,7 @@ import pandas as pd
 import pandas_gbq
 
 from deps.gcs import upload_blob, load_pipeline
-from deps.draftkings import get_draftkings_players, get_draftkings_predictions, dkLineupExport
+from deps.draftkings import get_draftkings_players, get_draftkings_predictions
 from deps.input import inputData
 
 def file_to_gcs(request):
