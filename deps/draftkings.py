@@ -52,7 +52,7 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salar
     starting_batters as(
     select distinct concat(firstname, " ", lastname) as name
     from `{project}.{dataset_base}.starting_lineups_{dt}`
-    join `scarlet-labs.{dataset_base}.playerid_master`
+    join `{project}.{dataset_base}.playerid_master`
     using(mlbcode)
     ),
 
