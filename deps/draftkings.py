@@ -56,10 +56,18 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salar
     on a.tm = b.mlbam_team
     ),
 
+    starting_batters as(
+    select distinct concat(firstname, " ", lastname) as name
+    from `{project}.{dataset_base}.starting_lineups_{dt}`
+    join `scarlet-labs.{dataset_base}.playerid_master`
+    using(mlbcode)
+    ),
+
     raw as(
     select *
     from dk
-    where name not in (select * from injuries) and position != "SP"
+    where (name not in (select * from injuries) and position != "SP")
+    and (name in (select * from starting_batters))
     union all(
     select *
     from probable_starters
