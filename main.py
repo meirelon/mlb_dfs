@@ -120,22 +120,3 @@ def dk_lineup(request):
     lineup_link = "https://storage.cloud.google.com/{bucket}/lineups/daily_dk_lineups.csv"
 
     return lineup_link.format(bucket=bucket, dt=today.replace("-",""))
-
-
-def dk_lineups_export(request):
-    project = os.environ["PROJECT_ID"]
-    dataset = os.environ["DATASET"]
-    bucket = os.environ["BUCKET"]
-    today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
-
-    pipeline = dkLineupExport(project=project,
-                                   dataset=dataset,
-                                   bucket=bucket,
-                                   dt=today.replace("-", ""))
-
-    lineups_export = pipeline.run()
-    lineups_export.to_csv("/tmp/lineups_export.csv", index=False)
-
-    upload_blob(bucket_name=bucket,
-                source_file_name="/tmp/lineups_export.csv",
-                destination_blob_name="lineups/daily_export_dk_lineups.csv".format(today.replace("-","")))
