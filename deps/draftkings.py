@@ -49,18 +49,18 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salar
     using (name, teamabbrev)
     ),
 
-    predictions as(
-    select name, teamabbrev, prediction
-    from `{project}.{dataset_dfs}.mlb_dk_predictions_{dt}` a
-    join `{project}.{dataset_base}.mlbam_team_mapping` b
-    on a.tm = b.mlbam_team
-    ),
-
     starting_batters as(
     select distinct concat(firstname, " ", lastname) as name
     from `{project}.{dataset_base}.starting_lineups_{dt}`
     join `scarlet-labs.{dataset_base}.playerid_master`
     using(mlbcode)
+    ),
+
+    predictions as(
+    select name, teamabbrev, prediction
+    from `{project}.{dataset_dfs}.mlb_dk_predictions_{dt}` a
+    join `{project}.{dataset_base}.mlbam_team_mapping` b
+    on a.tm = b.mlbam_team
     ),
 
     raw as(
