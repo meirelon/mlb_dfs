@@ -52,7 +52,7 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salar
     starting_batters as(
     select distinct concat(firstname, " ", lastname) as name
     from `{project}.{dataset_base}.starting_lineups_*`
-    where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_dfs}.starting_lineups_*`)
+    where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_base}.starting_lineups_*`)
     join `{project}.{dataset_base}.playerid_master`
     using(mlbcode)
     ),
