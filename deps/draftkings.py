@@ -55,6 +55,7 @@ def get_draftkings_predictions(project, dataset_base, dataset_dfs, dt, min_salar
     join `{project}.{dataset_base}.playerid_master`
     using(mlbcode)
     where _table_suffix = (select max(_table_suffix) from `{project}.{dataset_base}.starting_lineups_*`)
+    and batting_order < 7
     ),
 
     predictions as(
