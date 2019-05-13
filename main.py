@@ -70,6 +70,7 @@ def dk_predictions(request):
               if_exists="replace")
 
 def dk_lineup(request):
+    import requests
     # check if most recent lineups were already created.
     from pydfs_lineup_optimizer import get_optimizer, Site, Sport, CSVLineupExporter
     project = os.environ["PROJECT_ID"]
@@ -78,6 +79,9 @@ def dk_lineup(request):
     dataset_dfs = os.environ["DATASET_DFS"]
     today = (datetime.now() - timedelta(hours=4)).strftime('%Y-%m-%d')
     request_json = request.get_json(silent=True)
+
+    starting_lineups = "https://us-central1-{}.cloudfunctions.net/starting_lineups"
+    r = requests.post(starting_lineups.format(project))
 
     if request_json and "n_lineups" in request_json:
         n_lineups = int(request_json.get("n_lineups"))
