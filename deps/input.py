@@ -1,6 +1,5 @@
 import pandas as pd
 from datetime import datetime, timedelta
-from sklearn.impute import SimpleImputer
 
 class inputData:
     def __init__(self, project, dataset, yesterday, today):
@@ -127,4 +126,4 @@ class inputData:
        'hc_y_mean', 'launch_speed_mean', 'launch_angle_mean',
        'pitch_number_mean']
         input_data = self.get_input_data()
-        return my_imputer.fit_transform(input_data[select_cols])
+        return input_data[select_cols]
