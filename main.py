@@ -65,7 +65,7 @@ def dk_predictions(request):
                           today=today)
     df = input_run.run()
     my_imputer = SimpleImputer()
-    df["prediction"] = model.predict(my_imputer.fit_transform(df.drop(["name", "tm"])), axis=1)
+    df["prediction"] = model.predict(my_imputer.fit_transform(df.drop(["name", "tm"], axis=1)))
     prediction_df = df[["name", "tm", "prediction"]]
     pandas_gbq.to_gbq(prediction_df, project_id=project,
               destination_table="{dataset}.mlb_dk_predictions_{dt}".format(dataset=dataset_dfs, dt=today.replace("-","")),
