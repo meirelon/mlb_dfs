@@ -108,7 +108,6 @@ class inputData:
             return df
 
     def run(self):
-        my_imputer = SimpleImputer()
         select_cols = ["name","tm", 'age', 'apparentTemperatureHigh', 'apparentTemperatureHighTime',
        'apparentTemperatureLow', 'apparentTemperatureLowTime',
        'apparentTemperatureMax', 'apparentTemperatureMaxTime',
